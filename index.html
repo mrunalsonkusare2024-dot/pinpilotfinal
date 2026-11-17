@@ -81,7 +81,7 @@ pre{background:var(--ink);color:#d9d6ee;padding:14px;border-radius:16px;overflow
 <main id="top">
   <div class="note">Your data is saved in this browser only. Posting to Pinterest needs the PinPilot app on your laptop; here, scheduled posts run as a <b>simulation</b> until a real connection is made.</div>
   <div class="top">
-    <div><h1>Dashboard</h1><div class="sub" id="sub"></div></div>
+    <div><button class="sm" id="backBtn" style="margin-bottom:10px">← Back</button><h1>Dashboard</h1><div class="sub" id="sub"></div></div>
     <div class="actions" id="actions"></div>
   </div>
   <div class="tiles" id="tiles"></div>
@@ -125,6 +125,7 @@ pre{background:var(--ink);color:#d9d6ee;padding:14px;border-radius:16px;overflow
     <div class="actions"><button class="sm" data-act="sample">Load sample data</button><button class="sm" data-act="export">Export</button><button class="sm" data-act="reset">Reset</button></div></div>
   <pre id="logBox"></pre>
 </main></div>
+<button class="dark" id="toTop" style="position:fixed;right:20px;bottom:20px;display:none;z-index:5">↑ Top</button>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -269,6 +270,9 @@ document.addEventListener("change",function(e){var t=e.target;
  if(t.dataset.auto){var a=app(t.dataset.auto);a.auto=t.checked;if(t.checked&&!isConn(a))connect(a.id);log("Auto-connect "+(t.checked?"on":"off")+": "+a.name);save();render()}
  else if(t.id==="autoAll"){S.integrations.forEach(function(a){a.auto=t.checked;if(t.checked&&!isConn(a))connect(a.id)});save();render()}});
 
+$("backBtn").onclick=function(){if(history.length>1&&document.referrer)history.back();else window.scrollTo({top:0,behavior:"smooth"})};
+$("toTop").onclick=function(){window.scrollTo({top:0,behavior:"smooth"})};
+window.addEventListener("scroll",function(){$("toTop").style.display=window.scrollY>500?"block":"none"});
 // auto-connect on load
 S.integrations.forEach(function(a){if(a.auto&&!isConn(a))connect(a.id)});
 setInterval(function(){if(LIVE)pull(false)},15000);
