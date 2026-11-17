@@ -1,56 +1,252 @@
 <!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>PinPilot – Daily Pinterest pins on autopilot</title>
-<meta name="description" content="PinPilot finds affordable 4★+ fashion and decor, makes your affiliate links, writes pin copy and posts 6 pins a day.">
-<link rel="stylesheet" href="style.css">
-</head>
-<body>
-<header class="nav">
-  <strong class="logo">📌 PinPilot</strong>
-  <nav><a href="#how">How it works</a><a href="#features">Features</a><a href="#start">Get started</a></nav>
-</header>
-
-<section class="hero">
-  <h1>Your Pinterest, on autopilot.</h1>
-  <p>Every day PinPilot finds 4★+ affordable Myntra &amp; Flipkart fashion and home decor, creates your EarnKaro link, writes the pin copy and posts 6 pins to the right boards.</p>
-  <a class="btn" href="#start">Get started</a>
-  <a class="btn ghost" href="#how">See how it works</a>
-</section>
-
-<section id="how" class="wrap">
-  <h2>How it works</h2>
-  <div class="grid">
-    <div class="card"><span>1</span><h3>Discover</h3><p>Browses trending searches (festivals, seasons, evergreen picks) and filters by rating and price.</p></div>
-    <div class="card"><span>2</span><h3>Convert</h3><p>Turns each product into your EarnKaro affiliate link automatically.</p></div>
-    <div class="card"><span>3</span><h3>Write</h3><p>Generates titles and descriptions with a built-in affiliate disclosure.</p></div>
-    <div class="card"><span>4</span><h3>Post</h3><p>Schedules 6 pins a day to the matching Pinterest boards.</p></div>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PinPilot Dashboard</title>
+<meta name="description" content="PinPilot dashboard: connect Pinterest and EarnKaro, set goals, queue pins and track results.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#14142b;--mute:#7b7b93;--line:#ece8f4;--card:#fff;--soft:#f6f4fb;--lilac:#e2dafb;--purple:#7a5ce0;--peach:#ffd9bd;--orange:#ff9a5c;--pink:#f0568c;--green:#dcf2c0;--green-d:#3d7a10;--r:22px}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;font:14px/1.45 "Plus Jakarta Sans",system-ui,sans-serif;color:var(--ink);min-height:100vh;padding:28px;background:radial-gradient(1200px 700px at 0% 0%,#ffd8c2 0%,transparent 60%),radial-gradient(1000px 700px at 100% 100%,#d9c2ff 0%,transparent 55%),linear-gradient(135deg,#ffc9d9,#dcd0ff);background-attachment:fixed}
+.shell{max-width:1400px;margin:0 auto;background:rgba(255,255,255,.72);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.8);border-radius:34px;padding:16px;display:grid;grid-template-columns:230px 1fr;gap:16px;box-shadow:0 30px 80px rgba(110,70,170,.18)}
+a{color:inherit;text-decoration:none}
+.side{background:var(--card);border-radius:var(--r);padding:18px;display:flex;flex-direction:column;gap:18px;position:sticky;top:28px;align-self:start;max-height:calc(100vh - 56px);overflow:auto}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:19px}
+.logo i{width:34px;height:34px;border-radius:12px;background:linear-gradient(135deg,var(--pink),var(--orange));display:grid;place-items:center;color:#fff;font-style:normal;font-size:16px}
+.acct{background:var(--soft);border-radius:16px;padding:10px 12px;display:flex;gap:10px;align-items:center}
+.acct b{display:block;font-size:13px}.acct span{font-size:11px;color:var(--mute)}
+.av{width:34px;height:34px;border-radius:50%;background:var(--lilac);display:grid;place-items:center;font-weight:800;color:var(--purple)}
+.nav{display:flex;flex-direction:column;gap:4px}
+.nav a{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:14px;color:var(--mute);font-weight:600}
+.nav a:hover{background:var(--soft);color:var(--ink)}.nav a span{width:20px;text-align:center}
+.assist{margin-top:auto;background:var(--green);border-radius:18px;padding:14px;font-size:12.5px}.assist b{display:block;font-size:13.5px;margin-bottom:4px}
+main{padding:10px 12px 20px;min-width:0}
+.top{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;justify-content:space-between;margin-bottom:16px}
+h1{font-size:40px;line-height:1.05;margin:0;font-weight:500;letter-spacing:-1.2px}.sub{color:var(--mute);margin-top:6px}
+.actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+button,.btn{font:inherit;font-weight:600;padding:9px 16px;border-radius:99px;border:1px solid var(--line);background:#fff;color:var(--ink);cursor:pointer;transition:.15s}
+button:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(80,50,140,.12)}button:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none}
+.dark{background:var(--ink)!important;color:#fff!important;border-color:var(--ink)!important}.purple{background:var(--purple)!important;color:#fff!important;border-color:var(--purple)!important}
+.sm{padding:6px 12px;font-size:12.5px}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:99px;font-size:12px;font-weight:700;background:var(--soft);color:var(--mute)}
+.chip.green{background:var(--green);color:var(--green-d)}.chip.peach{background:var(--peach);color:#a14b0c}.chip.pink{background:#ffd3e3;color:#b3174f}.chip.lilac{background:var(--lilac);color:var(--purple)}
+.chip.dot::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.note{background:#fff6dc;border:1px solid #ffe7a3;padding:9px 14px;border-radius:14px;margin-bottom:12px;font-size:13px}
+.tiles{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:14px}
+.tile{background:var(--card);border-radius:18px;padding:14px 16px}.tile span{color:var(--mute);font-size:12px;font-weight:600}.tile b{display:block;font-size:26px;font-weight:700;margin-top:6px;letter-spacing:-.5px}
+.tile.l{background:var(--lilac)}.tile.g{background:var(--green)}.tile.p{background:var(--peach)}
+.panel{background:var(--card);border-radius:var(--r);padding:18px;min-width:0}.panel h3{margin:0 0 4px;font-size:16px;font-weight:700}.hint{color:var(--mute);font-size:12px;margin-bottom:12px}
+.row2{display:grid;grid-template-columns:1.7fr 1fr;gap:14px;margin-bottom:14px}
+.legend{display:flex;gap:14px;font-size:12px;color:var(--mute);margin-bottom:8px}.legend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px}
+.chart{display:flex;align-items:flex-end;gap:7px;height:200px;border-bottom:1px dashed var(--line);padding-top:6px}
+.cg{flex:1;display:flex;align-items:flex-end;justify-content:center;gap:2px;height:100%}.cg div{width:42%;border-radius:6px 6px 0 0;min-height:3px}.cg .a{background:var(--pink)}.cg .b{background:#ffb27a}
+.xl{display:flex;gap:7px;margin-top:6px}.xl span{flex:1;text-align:center;font-size:10px;color:var(--mute)}
+.slot{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line)}.slot:last-child{border-bottom:0}
+.slot .t{font-weight:700;width:52px}.slot .bar{flex:1;height:8px;background:var(--soft);border-radius:99px;overflow:hidden}.slot .bar i{display:block;height:100%;background:var(--purple);border-radius:99px;width:0}.slot.done .bar i{width:100%}
+.apps{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.app{background:var(--soft);border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:8px}
+.app .h{display:flex;gap:10px;align-items:center}.app .ic{width:38px;height:38px;border-radius:12px;background:#fff;display:grid;place-items:center;font-size:18px}
+.app small{color:var(--mute);font-size:12px}.app .r{display:flex;gap:8px;align-items:center;justify-content:space-between;margin-top:auto;flex-wrap:wrap}
+.sw{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:600;cursor:pointer}.sw input{accent-color:var(--purple);width:16px;height:16px}
+.rings{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:12px}
+.ringc{background:var(--soft);border-radius:18px;padding:12px;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center}.ringc small{color:var(--mute);font-size:11.5px}.ringc input{text-align:center}
+input[type=text],input[type=number],select,textarea{font:inherit;padding:9px 12px;border:1px solid var(--line);border-radius:12px;background:#fff;width:100%;color:var(--ink)}
+input:focus,textarea:focus,select:focus{outline:2px solid var(--lilac)}
+.erow{display:flex;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}.erow>span{flex:1}.erow:last-child{border-bottom:0}
+.sec{display:flex;justify-content:space-between;align-items:center;margin:6px 4px 12px;flex-wrap:wrap;gap:10px}.sec h2{margin:0;font-size:22px;font-weight:600;letter-spacing:-.4px}
+.add{display:flex;gap:8px;flex:1;max-width:640px;flex-wrap:wrap}.add input[type=text]{flex:3;min-width:200px}.add input[type=number]{flex:1;min-width:90px;width:auto}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.pin{background:var(--card);border-radius:20px;overflow:hidden;display:flex;flex-direction:column}.ph{height:150px;display:grid;place-items:center;font-size:44px}
+.pin .b{padding:13px;display:flex;flex-direction:column;gap:7px;flex:1}.pin h4{margin:0;font-size:14px;line-height:1.3}.meta{color:var(--mute);font-size:12px}
+.stats{display:flex;gap:12px;font-size:12px;font-weight:600}
+details summary{cursor:pointer;color:var(--purple);font-size:12.5px;font-weight:600}details .f{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.pa{margin-top:auto;display:flex;gap:6px;flex-wrap:wrap;padding-top:4px}
+pre{background:var(--ink);color:#d9d6ee;padding:14px;border-radius:16px;overflow:auto;font-size:12px;max-height:210px;margin:0;white-space:pre-wrap}
+.empty{background:var(--card);border-radius:20px;padding:30px;text-align:center;color:var(--mute);grid-column:1/-1}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#14142b;color:#fff;padding:11px 18px;border-radius:99px;font-weight:600;opacity:0;transition:.2s;pointer-events:none;z-index:9}.toast.on{opacity:1}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media(max-width:1100px){.tiles{grid-template-columns:repeat(3,1fr)}.row2{grid-template-columns:1fr}}
+@media(max-width:820px){body{padding:10px}.shell{grid-template-columns:1fr;border-radius:24px}.side{position:static;max-height:none}.nav{flex-direction:row;flex-wrap:wrap}.assist{margin-top:0}h1{font-size:30px}.tiles{grid-template-columns:repeat(2,1fr)}}
+</style></head><body>
+<div class="shell">
+<aside class="side">
+  <div class="logo"><i>📌</i> PinPilot</div>
+  <div class="acct"><div class="av">P</div><div><b>Pinterest</b><span id="acctState">Not connected</span></div></div>
+  <nav class="nav">
+    <a href="#top"><span>⌂</span> Dashboard</a><a href="#connections"><span>⚡</span> Connections</a><a href="#insights"><span>∿</span> Insights</a>
+    <a href="#goals"><span>◎</span> Goals</a><a href="#earnings"><span>₹</span> Earnings</a><a href="#pins"><span>▦</span> Pins</a><a href="#log"><span>≡</span> Activity</a>
+  </nav>
+  <div class="assist" id="assist"></div>
+</aside>
+<main id="top">
+  <div class="note">Your data is saved in this browser only. Posting to Pinterest needs the PinPilot app on your laptop; here, scheduled posts run as a <b>simulation</b> until a real connection is made.</div>
+  <div class="top">
+    <div><h1>Dashboard</h1><div class="sub" id="sub"></div></div>
+    <div class="actions" id="actions"></div>
   </div>
-</section>
+  <div class="tiles" id="tiles"></div>
+  <div class="row2" id="insights">
+    <div class="panel"><h3>Last 14 days</h3><div class="hint">Results by the day a pin was posted. Each series is scaled to its own peak.</div>
+      <div class="legend"><span><i style="background:var(--pink)"></i>Impressions</span><span><i style="background:#ffb27a"></i>Clicks to shop</span></div>
+      <div class="chart" id="chart"></div><div class="xl" id="xl"></div></div>
+    <div class="panel"><h3>Today's schedule</h3><div class="hint" id="schHint"></div><div id="slots"></div>
+      <div style="margin-top:10px"><label class="meta">Posting times (comma separated, 24h)</label><div style="display:flex;gap:6px;margin-top:4px"><input type="text" id="slotsIn"><button class="sm dark" data-act="saveSlots">Save</button></div></div></div>
+  </div>
 
-<section id="features" class="wrap alt">
-  <h2>Features</h2>
-  <ul class="list">
-    <li>Local dashboard to review, edit and skip pins</li>
-    <li>Dry-run mode so nothing posts until you're ready</li>
-    <li>Impressions, saves and click tracking</li>
-    <li>Monthly goals and earnings tracker</li>
-    <li>Trend-based search refresh for the India festival calendar</li>
-    <li>Retries with backoff; runs on your own laptop or Docker</li>
-  </ul>
-</section>
+  <div class="panel" id="connections" style="margin-bottom:14px">
+    <div class="sec" style="margin:0 0 6px"><div><h3>Connections</h3><div class="hint" style="margin:0">Link the apps PinPilot works with. Turn on auto-connect to reconnect them every time you open the dashboard.</div></div>
+      <label class="sw"><input type="checkbox" id="autoAll"> Auto-connect all</label></div>
+    <div class="apps" id="apps"></div>
+    <details style="margin-top:12px"><summary>+ Add another app</summary>
+      <div class="two" style="margin-top:8px"><input type="text" id="newName" placeholder="App name (e.g. Canva, Amazon Associates)"><input type="text" id="newDesc" placeholder="What it's for"></div>
+      <button class="sm dark" style="margin-top:8px" data-act="addApp">Add app</button></details>
+  </div>
 
-<section id="start" class="wrap">
-  <h2>Get started</h2>
-  <pre><code>python -m venv .venv
-pip install -r requirements.txt
-playwright install chromium
-uvicorn app.main:app --port 8000</code></pre>
-  <p>Then open <b>http://localhost:8000</b> and click <b>Connect Pinterest</b>.</p>
-</section>
+  <div class="row2">
+    <div class="panel" id="goals"><h3>Goals this month</h3><div class="hint">Set a target and the ring fills as you go.</div>
+      <div class="rings" id="rings"></div><div style="margin-top:12px"><button class="dark" data-act="saveGoals">Save goals</button></div></div>
+    <div class="panel" id="earnings"><h3>Earnings</h3><div class="hint">Type what your EarnKaro app shows. It feeds the earnings goal.</div>
+      <div style="display:flex;gap:6px;margin-bottom:8px"><input type="text" id="eDate" style="width:120px"><input type="number" id="eAmt" placeholder="₹" style="width:80px"><input type="text" id="eNote" placeholder="note"><button class="dark sm" data-act="addEarn">Add</button></div>
+      <div id="earnList"></div></div>
+  </div>
 
-<footer>© 2026 PinPilot. Keep volume low and keep the affiliate disclosure.</footer>
-</body>
-</html>
+  <div class="sec" id="pins"><h2>Pins</h2>
+    <div class="add"><input type="text" id="pUrl" placeholder="Paste a Myntra or Flipkart product link"><input type="number" id="pPrice" placeholder="₹ price"><button class="dark" data-act="addPin">Add</button></div></div>
+  <div class="grid" id="pinGrid"></div>
+
+  <div class="sec" id="log" style="margin-top:22px"><h2>Activity</h2>
+    <div class="actions"><button class="sm" data-act="sample">Load sample data</button><button class="sm" data-act="export">Export</button><button class="sm" data-act="reset">Reset</button></div></div>
+  <pre id="logBox"></pre>
+</main></div>
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+var KEY="pinpilot.v2";
+var $=function(i){return document.getElementById(i)};
+function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
+function today(d){d=d||new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
+function defaults(){return{
+ integrations:[
+  {id:"pinterest",name:"Pinterest",icon:"📌",desc:"Posts pins to your boards",connected:false,auto:false},
+  {id:"earnkaro",name:"EarnKaro",icon:"🔗",desc:"Turns product links into affiliate links",connected:false,auto:false},
+  {id:"myntra",name:"Myntra",icon:"👗",desc:"Fashion product source",connected:false,auto:false},
+  {id:"flipkart",name:"Flipkart",icon:"🛍️",desc:"Fashion & decor product source",connected:false,auto:false},
+  {id:"claude",name:"Claude (optional)",icon:"✨",desc:"Better titles and descriptions",connected:false,auto:false}],
+ settings:{autoApprove:true,dryRun:true,slots:["10:00","12:30","15:00","17:30","19:30","21:00"]},
+ goals:{pins:180,impressions:10000,clicks:300,earnings:5000},
+ pins:[],earnings:[],log:[],slotsDone:{},nextId:1};}
+var S;try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}
+if(!S||!S.integrations)S=defaults();
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function say(m){var t=$("toast");t.textContent=m;t.classList.add("on");clearTimeout(say.k);say.k=setTimeout(function(){t.classList.remove("on")},2600)}
+function log(m){S.log.unshift(new Date().toLocaleTimeString()+"  "+m);S.log=S.log.slice(0,80)}
+function app(id){return S.integrations.filter(function(a){return a.id===id})[0]}
+function connected(id){var a=app(id);return !!(a&&a.connected)}
+
+var HUES=["#ffd3e3,#e2dafb","#ffd9bd,#ffc9d9","#dcf2c0,#e2dafb","#e2dafb,#ffd9bd","#ffc9d9,#ffd9bd","#dcf2c0,#ffd9bd"];
+function sums(){var p=S.pins.filter(function(x){return x.status==="posted"||x.status==="dry_run"});var s={posted:p.length,imp:0,saves:0,clicks:0};
+ p.forEach(function(x){s.imp+=+x.imp||0;s.saves+=+x.saves||0;s.clicks+=+x.clicks||0});s.earn=S.earnings.reduce(function(a,e){return a+(+e.amount||0)},0);return s}
+function ring(pct,color,label){var c=238.76,d=(Math.min(pct,100)/100*c).toFixed(1);
+ return '<svg viewBox="0 0 90 90" width="88" height="88"><circle cx="45" cy="45" r="38" fill="none" stroke="#ebe6f7" stroke-width="9"/><circle cx="45" cy="45" r="38" fill="none" stroke="'+color+'" stroke-width="9" stroke-linecap="round" stroke-dasharray="'+d+' '+c+'" transform="rotate(-90 45 45)"/><text x="45" y="50" text-anchor="middle" font-size="16" font-weight="700" fill="#14142b">'+Math.round(pct)+'%</text></svg>'}
+
+function render(){
+ var s=sums(),pc=connected("pinterest");
+ $("acctState").textContent=pc?"Connected":"Not connected";
+ $("sub").textContent=new Date().toLocaleDateString(undefined,{month:"long",year:"numeric"})+" · posting "+S.settings.slots.join(", ");
+ var waiting=S.pins.filter(function(p){return p.status==="pending"}).length;
+ $("assist").innerHTML="<b>Auto-approve is "+(S.settings.autoApprove?"ON":"OFF")+"</b>"+(S.settings.autoApprove?"New pins go straight into the queue.":waiting+" pin"+(waiting===1?"":"s")+" waiting for your OK.")+
+  '<div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap"><button class="sm dark" data-act="toggleAuto">Turn '+(S.settings.autoApprove?"off":"on")+'</button>'+(waiting?'<button class="sm" data-act="approveAll">Approve all</button>':"")+"</div>";
+ $("actions").innerHTML='<button class="chip dot '+(S.settings.dryRun?"peach":"green")+'" data-act="toggleDry" title="Click to switch">'+(S.settings.dryRun?"Dry run: not posting":"Live mode")+"</button>"+
+  '<button class="purple" data-act="'+(pc?"disc:pinterest":"conn:pinterest")+'">'+(pc?"Pinterest connected ✓":"Connect Pinterest")+'</button><button data-act="postNext">Post next</button><button class="dark" data-act="addSample">Prepare pins</button>';
+ var rate=s.imp?(s.clicks/s.imp*100).toFixed(1)+"%":"–";
+ $("tiles").innerHTML=[["Pins posted",s.posted,""],["Impressions",s.imp.toLocaleString(),"l"],["Clicks to shop",s.clicks,""],["Saves",s.saves,""],["Click rate",rate,"p"],["Earned","₹"+s.earn.toLocaleString(),"g"]].map(function(t){return '<div class="tile '+t[2]+'"><span>'+t[0]+"</span><b>"+t[1]+"</b></div>"}).join("");
+ // chart
+ var days=[],i;for(i=13;i>=0;i--){var d=new Date();d.setDate(d.getDate()-i);days.push(today(d))}
+ var imp={},clk={};S.pins.forEach(function(p){if(p.postedDate){imp[p.postedDate]=(imp[p.postedDate]||0)+(+p.imp||0);clk[p.postedDate]=(clk[p.postedDate]||0)+(+p.clicks||0)}});
+ var mi=Math.max.apply(null,days.map(function(d){return imp[d]||0}).concat(1)),mc=Math.max.apply(null,days.map(function(d){return clk[d]||0}).concat(1));
+ $("chart").innerHTML=days.map(function(d){return '<div class="cg"><div class="a" style="height:'+((imp[d]||0)/mi*100)+'%" title="'+d+': '+(imp[d]||0)+' impressions"></div><div class="b" style="height:'+((clk[d]||0)/mc*100)+'%" title="'+d+': '+(clk[d]||0)+' clicks"></div></div>'}).join("");
+ $("xl").innerHTML=days.map(function(d,i){return "<span>"+(i%2?"":d.slice(8))+"</span>"}).join("");
+ // slots
+ var t=today(),done=0;
+ $("slots").innerHTML=S.settings.slots.map(function(sl){var u=S.slotsDone[t+" "+sl];if(u)done++;var late=!u&&nowHM()>=sl;
+  return '<div class="slot '+(u?"done":"")+'"><span class="t">'+sl+'</span><div class="bar"><i></i></div><span class="chip '+(u?"green":late?"peach":"")+'">'+(u?"Done":late?(pc?"No pin ready":"Needs Pinterest"):"Queued")+"</span></div>"}).join("");
+ $("schHint").textContent=done+" of "+S.settings.slots.length+" posted · "+S.pins.filter(function(p){return p.status==="ready"}).length+" ready · "+waiting+" pending";
+ if(document.activeElement!==$("slotsIn"))$("slotsIn").value=S.settings.slots.join(", ");
+ // apps
+ $("apps").innerHTML=S.integrations.map(function(a){return '<div class="app"><div class="h"><div class="ic">'+a.icon+'</div><div><b>'+esc(a.name)+'</b><br><small>'+esc(a.desc)+'</small></div></div>'+
+  '<div class="r"><span class="chip dot '+(a.connected?"green":"")+'">'+(a.connected?"Connected":"Not connected")+'</span><label class="sw"><input type="checkbox" data-auto="'+a.id+'" '+(a.auto?"checked":"")+'> Auto-connect</label></div>'+
+  '<div class="r"><button class="sm '+(a.connected?"":"purple")+'" data-act="'+(a.connected?"disc:":"conn:")+a.id+'">'+(a.connected?"Disconnect":"Connect")+"</button>"+(a.custom?'<button class="sm" data-act="rmApp:'+a.id+'">Remove</button>':"")+"</div></div>"}).join("");
+ $("autoAll").checked=S.integrations.every(function(a){return a.auto});
+ // goals
+ var g=S.goals,defs=[["pins","Pins posted",s.posted,"#f0568c"],["impressions","Impressions",s.imp,"#7a5ce0"],["clicks","Clicks to shop",s.clicks,"#ff9a5c"],["earnings","Earnings (₹)",s.earn,"#5aa31f"]];
+ $("rings").innerHTML=defs.map(function(d){var tg=+g[d[0]]||0;return '<div class="ringc">'+ring(tg?d[2]/tg*100:0,d[3])+"<b>"+d[1]+"</b><small>"+d[2]+" / "+tg+'</small><input type="number" data-goal="'+d[0]+'" value="'+tg+'" placeholder="target"></div>'}).join("");
+ if(!$("eDate").value)$("eDate").value=t;
+ $("earnList").innerHTML=S.earnings.length?S.earnings.slice().reverse().map(function(e){return '<div class="erow"><span>'+esc(e.date)+" · <b>₹"+e.amount+'</b> <span class="meta">'+esc(e.note)+'</span></span><button class="sm" data-act="delEarn:'+e.id+'" title="Remove">✕</button></div>'}).join(""):'<div class="meta">No earnings yet.</div>';
+ // pins
+ $("pinGrid").innerHTML=S.pins.length?S.pins.slice().reverse().map(pinCard).join(""):'<div class="empty">No pins yet. Paste a product link above, or press <b>Prepare pins</b> to add sample ones.</div>';
+ $("logBox").textContent=S.log.length?S.log.join("\n"):"Nothing has run yet.";
+}
+function nowHM(){var d=new Date();return String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0")}
+function pinCard(p){
+ var chipc={pending:"peach",ready:"lilac",posted:"green",dry_run:"green",skipped:""}[p.status]||"";
+ var posted=p.status==="posted"||p.status==="dry_run";
+ return '<div class="pin"><div class="ph" style="background:linear-gradient(145deg,'+HUES[p.id%HUES.length]+')">'+(p.src==="Myntra"?"👗":"🛍️")+'</div><div class="b"><span class="chip '+chipc+'" style="align-self:flex-start">'+(p.status==="dry_run"?"posted (dry run)":p.status)+"</span>"+
+ "<h4>"+esc(p.title)+'</h4><div class="meta">'+esc(p.src)+(p.price?" · ₹"+p.price:"")+" · "+esc(p.board)+"</div>"+
+ (posted?'<div class="stats"><span>👁 '+(p.imp||0)+"</span><span>📌 "+(p.saves||0)+"</span><span>🛒 "+(p.clicks||0)+"</span></div>":"")+
+ '<details><summary>'+(posted?"Update stats":"Edit")+'</summary><div class="f">'+
+ (posted?'<div class="two"><input type="number" data-f="imp" data-id="'+p.id+'" value="'+(p.imp||0)+'" title="Impressions"><input type="number" data-f="clicks" data-id="'+p.id+'" value="'+(p.clicks||0)+'" title="Clicks"></div><input type="number" data-f="saves" data-id="'+p.id+'" value="'+(p.saves||0)+'" title="Saves">':
+ '<input type="text" data-f="title" data-id="'+p.id+'" value="'+esc(p.title)+'"><textarea rows="4" data-f="desc" data-id="'+p.id+'">'+esc(p.desc)+'</textarea><input type="text" data-f="board" data-id="'+p.id+'" value="'+esc(p.board)+'">')+
+ '<button class="sm dark" data-act="savePin:'+p.id+'" style="align-self:flex-start">Save</button></div></details>'+
+ '<div class="pa">'+(p.status==="pending"?'<button class="sm purple" data-act="approve:'+p.id+'">Approve</button>':"")+(p.status==="pending"||p.status==="ready"?'<button class="sm" data-act="skip:'+p.id+'">Skip</button>':"")+'<button class="sm" data-act="delPin:'+p.id+'">Delete</button></div></div></div>'}
+
+function addPin(o){var id=S.nextId++;var p={id:id,title:o.title,src:o.src,price:o.price||"",board:o.board,desc:o.desc||(o.title+" #Fashion #HomeDecor\n\nAffiliate link: I may earn a small commission at no extra cost to you."),
+ status:S.settings.autoApprove?"ready":"pending",created:Date.now(),imp:0,saves:0,clicks:0};S.pins.push(p);return p}
+function titleFromUrl(u){var seg=u.pathname.split("/").filter(function(x){return x.length>6&&/[a-z]-[a-z]/i.test(x)}).sort(function(a,b){return b.length-a.length})[0]||"Product";
+ return seg.replace(/\/?p$/,"").replace(/[-_]+/g," ").replace(/\b\w/g,function(c){return c.toUpperCase()})}
+function postOne(slotKey){var p=S.pins.filter(function(x){return x.status==="ready"})[0];if(!p)return false;
+ p.status=S.settings.dryRun?"dry_run":"posted";p.postedDate=today();if(slotKey)S.slotsDone[slotKey]=p.id;
+ log((S.settings.dryRun?"[dry run] ":"")+"Posted: "+p.title+" → "+p.board);return true}
+function tick(){var t=today();var changed=false;
+ if(connected("pinterest"))S.settings.slots.forEach(function(sl){var k=t+" "+sl;if(!S.slotsDone[k]&&nowHM()>=sl){if(postOne(k))changed=true}});
+ if(changed){save();render()}}
+function connect(id){var a=app(id);if(!a||a.connected)return;a.connected=null;render();
+ setTimeout(function(){a.connected=true;a.at=Date.now();log("Connected "+a.name);save();render();say(a.name+" connected")},700)}
+
+document.addEventListener("click",function(e){var el=e.target.closest("[data-act]");if(!el)return;var act=el.dataset.act,arg="";var ix=act.indexOf(":");if(ix>0){arg=act.slice(ix+1);act=act.slice(0,ix)}
+ var pin=function(){return S.pins.filter(function(p){return String(p.id)===arg})[0]};
+ if(act==="conn")return connect(arg);
+ if(act==="disc"){var a=app(arg);a.connected=false;log("Disconnected "+a.name);}
+ else if(act==="rmApp"){S.integrations=S.integrations.filter(function(a){return a.id!==arg})}
+ else if(act==="addApp"){var n=$("newName").value.trim();if(!n)return say("Give the app a name");S.integrations.push({id:"c"+Date.now(),name:n,icon:"🧩",desc:$("newDesc").value.trim()||"Custom app",connected:false,auto:false,custom:true});$("newName").value=$("newDesc").value="";log("Added app "+n)}
+ else if(act==="toggleAuto"){S.settings.autoApprove=!S.settings.autoApprove;if(S.settings.autoApprove)S.pins.forEach(function(p){if(p.status==="pending")p.status="ready"});log("Auto-approve "+(S.settings.autoApprove?"on":"off"))}
+ else if(act==="approveAll"){S.pins.forEach(function(p){if(p.status==="pending")p.status="ready"});log("Approved all pending pins")}
+ else if(act==="toggleDry"){S.settings.dryRun=!S.settings.dryRun;log(S.settings.dryRun?"Dry run on":"Live mode on (simulated here)")}
+ else if(act==="postNext"){if(!connected("pinterest"))return say("Connect Pinterest first");if(!postOne())return say("No ready pins in the queue")}
+ else if(act==="addSample"){var smp=[["Floral Cotton Kurta Set","Myntra",699,"Affordable Women's Fashion"],["Pastel Ceramic Vase Set","Myntra",749,"Aesthetic Home Decor"],["LED Fairy Light Curtain","Flipkart",299,"Aesthetic Home Decor"]];
+  smp.forEach(function(x){addPin({title:x[0]+" | under ₹"+(Math.ceil(x[2]/100)*100-1),src:x[1],price:x[2],board:x[3]})});log("Prepared "+smp.length+" pins")}
+ else if(act==="addPin"){var raw=$("pUrl").value.trim(),u;try{u=new URL(raw)}catch(x){return say("Paste a full product link")}
+  var h=u.hostname.toLowerCase(),src=h.indexOf("myntra")>-1?"Myntra":h.indexOf("flipkart")>-1?"Flipkart":"";if(!src)return say("Only Myntra or Flipkart links");
+  var pr=$("pPrice").value;addPin({title:titleFromUrl(u)+(pr?" | under ₹"+pr:""),src:src,price:pr,board:"Affordable Women's Fashion"});$("pUrl").value=$("pPrice").value="";log("Added "+src+" product")}
+ else if(act==="approve"){pin().status="ready"}
+ else if(act==="skip"){pin().status="skipped"}
+ else if(act==="delPin"){S.pins=S.pins.filter(function(p){return String(p.id)!==arg})}
+ else if(act==="savePin"){var p=pin();document.querySelectorAll('[data-id="'+arg+'"]').forEach(function(i){var v=i.value;p[i.dataset.f]=(i.type==="number")?+v:v});log("Updated "+p.title);say("Saved")}
+ else if(act==="saveSlots"){var v=$("slotsIn").value.split(",").map(function(x){return x.trim()}).filter(function(x){return /^([01]?\d|2[0-3]):[0-5]\d$/.test(x)}).map(function(x){return x.length===4?"0"+x:x}).sort();if(!v.length)return say("Use times like 10:00, 15:30");S.settings.slots=v;log("Posting times set")}
+ else if(act==="saveGoals"){document.querySelectorAll("[data-goal]").forEach(function(i){S.goals[i.dataset.goal]=+i.value||0});log("Goals saved");say("Goals saved")}
+ else if(act==="addEarn"){var am=+$("eAmt").value;if(!am)return say("Enter an amount");S.earnings.push({id:Date.now(),date:$("eDate").value||today(),amount:am,note:$("eNote").value.trim()});$("eAmt").value=$("eNote").value="";log("Earnings ₹"+am+" added")}
+ else if(act==="delEarn"){S.earnings=S.earnings.filter(function(x){return String(x.id)!==arg})}
+ else if(act==="sample"){["Oversized Linen Shirt","Boho Macrame Wall Hanging"].forEach(function(t,i){var p=addPin({title:t,src:i?"Flipkart":"Myntra",price:i?449:899,board:i?"Aesthetic Home Decor":"Affordable Women's Fashion"});p.status="posted";p.postedDate=today(new Date(Date.now()-(i+1)*864e5));p.imp=900+i*700;p.saves=40+i*30;p.clicks=12+i*9});S.earnings.push({id:Date.now(),date:today(),amount:240,note:"Myntra"});log("Loaded sample data")}
+ else if(act==="export"){var b=new Blob([JSON.stringify(S,null,2)],{type:"application/json"}),a2=document.createElement("a");a2.href=URL.createObjectURL(b);a2.download="pinpilot-data.json";a2.click();return}
+ else if(act==="reset"){if(!confirm("Erase all dashboard data in this browser?"))return;S=defaults()}
+ save();render()});
+
+document.addEventListener("change",function(e){var t=e.target;
+ if(t.dataset.auto){var a=app(t.dataset.auto);a.auto=t.checked;if(t.checked&&!a.connected)connect(a.id);log("Auto-connect "+(t.checked?"on":"off")+": "+a.name);save();render()}
+ else if(t.id==="autoAll"){S.integrations.forEach(function(a){a.auto=t.checked;if(t.checked&&!a.connected)connect(a.id)});save();render()}});
+
+// auto-connect on load
+S.integrations.forEach(function(a){if(a.auto&&!a.connected)connect(a.id)});
+render();tick();setInterval(tick,20000);setInterval(function(){if(!document.querySelector("details[open]")&&!/INPUT|TEXTAREA/.test(document.activeElement.tagName))render()},60000);
+})();
+</script></body></html>
