@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PinPilot – Daily Pinterest pins on autopilot</title>
+<meta name="description" content="PinPilot finds affordable 4★+ fashion and decor, makes your affiliate links, writes pin copy and posts 6 pins a day.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="nav">
+  <strong class="logo">📌 PinPilot</strong>
+  <nav><a href="#how">How it works</a><a href="#features">Features</a><a href="#start">Get started</a></nav>
+</header>
+
+<section class="hero">
+  <h1>Your Pinterest, on autopilot.</h1>
+  <p>Every day PinPilot finds 4★+ affordable Myntra &amp; Flipkart fashion and home decor, creates your EarnKaro link, writes the pin copy and posts 6 pins to the right boards.</p>
+  <a class="btn" href="#start">Get started</a>
+  <a class="btn ghost" href="#how">See how it works</a>
+</section>
+
+<section id="how" class="wrap">
+  <h2>How it works</h2>
+  <div class="grid">
+    <div class="card"><span>1</span><h3>Discover</h3><p>Browses trending searches (festivals, seasons, evergreen picks) and filters by rating and price.</p></div>
+    <div class="card"><span>2</span><h3>Convert</h3><p>Turns each product into your EarnKaro affiliate link automatically.</p></div>
+    <div class="card"><span>3</span><h3>Write</h3><p>Generates titles and descriptions with a built-in affiliate disclosure.</p></div>
+    <div class="card"><span>4</span><h3>Post</h3><p>Schedules 6 pins a day to the matching Pinterest boards.</p></div>
+  </div>
+</section>
+
+<section id="features" class="wrap alt">
+  <h2>Features</h2>
+  <ul class="list">
+    <li>Local dashboard to review, edit and skip pins</li>
+    <li>Dry-run mode so nothing posts until you're ready</li>
+    <li>Impressions, saves and click tracking</li>
+    <li>Monthly goals and earnings tracker</li>
+    <li>Trend-based search refresh for the India festival calendar</li>
+    <li>Retries with backoff; runs on your own laptop or Docker</li>
+  </ul>
+</section>
+
+<section id="start" class="wrap">
+  <h2>Get started</h2>
+  <pre><code>python -m venv .venv
+pip install -r requirements.txt
+playwright install chromium
+uvicorn app.main:app --port 8000</code></pre>
+  <p>Then open <b>http://localhost:8000</b> and click <b>Connect Pinterest</b>.</p>
+</section>
+
+<footer>© 2026 PinPilot. Keep volume low and keep the affiliate disclosure.</footer>
+</body>
+</html>
