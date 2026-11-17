@@ -128,6 +128,7 @@ function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){retur
 function today(d){d=d||new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
 function defaults(){return{
  integrations:[
+  {id:"local",name:"PinPilot app (laptop)",icon:"💻",desc:"Live data from your local PinPilot at localhost:8000",connected:false,auto:false},
   {id:"pinterest",name:"Pinterest",icon:"📌",desc:"Posts pins to your boards",connected:false,auto:false},
   {id:"earnkaro",name:"EarnKaro",icon:"🔗",desc:"Turns product links into affiliate links",connected:false,auto:false},
   {id:"myntra",name:"Myntra",icon:"👗",desc:"Fashion product source",connected:false,auto:false},
@@ -138,11 +139,21 @@ function defaults(){return{
  pins:[],earnings:[],log:[],slotsDone:{},nextId:1};}
 var S;try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}
 if(!S||!S.integrations)S=defaults();
-function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+if(!S.integrations.some(function(a){return a.id==="local"}))S.integrations.unshift(defaults().integrations[0]);
+var REAL=S,LIVE=null,LOCAL="http://localhost:8000";
+function save(){try{localStorage.setItem(KEY,JSON.stringify(REAL))}catch(e){}}
 function say(m){var t=$("toast");t.textContent=m;t.classList.add("on");clearTimeout(say.k);say.k=setTimeout(function(){t.classList.remove("on")},2600)}
 function log(m){S.log.unshift(new Date().toLocaleTimeString()+"  "+m);S.log=S.log.slice(0,80)}
 function app(id){return S.integrations.filter(function(a){return a.id===id})[0]}
-function connected(id){var a=app(id);return !!(a&&a.connected)}
+function isConn(a){if(a.id==="local")return !!LIVE;if(a.id==="pinterest"&&LIVE)return !!LIVE.pinterest.connected;return !!a.connected}
+function connected(id){var a=app(id);return !!(a&&isConn(a))}
+function goLive(j){LIVE=j;var t=today();
+ var pins=j.pins.slice().reverse().map(function(p){return{id:p.id,title:p.title||"Untitled",src:(p.site||"").replace(/^./,function(c){return c.toUpperCase()}),price:p.price?Math.round(p.price):"",board:p.board||"",desc:"",status:p.status==="found"?"pending":p.status,postedDate:(p.posted_at||"").slice(0,10),imp:p.impressions,saves:p.saves,clicks:p.clicks}});
+ var done={};j.post_times.forEach(function(sl,i){if(i<j.today)done[t+" "+sl]=1});
+ var g=j.goals;
+ S=Object.assign({},REAL,{pins:pins,earnings:j.earnings.slice().reverse().map(function(e){return{id:e.id,date:e.date,amount:e.amount,note:e.note}}),goals:{pins:g.pins,impressions:g.impressions,clicks:g.outbound_clicks,earnings:g.earnings},slotsDone:done,log:j.log,settings:{autoApprove:j.auto_approve,dryRun:j.dry_run,slots:j.post_times}});render()}
+function dropLive(){if(!LIVE)return;LIVE=null;S=REAL;render()}
+function pull(manual){return fetch(LOCAL+"/api/state",{cache:"no-store"}).then(function(r){if(!r.ok)throw 0;return r.json()}).then(function(j){var first=!LIVE;goLive(j);if(first){say("Live data from your laptop app")}}).catch(function(){var was=!!LIVE;dropLive();if(manual||was)say("Can't reach the PinPilot app. Start it: uvicorn app.main:app --port 8000")})}
 
 var HUES=["#ffd3e3,#e2dafb","#ffd9bd,#ffc9d9","#dcf2c0,#e2dafb","#e2dafb,#ffd9bd","#ffc9d9,#ffd9bd","#dcf2c0,#ffd9bd"];
 function sums(){var p=S.pins.filter(function(x){return x.status==="posted"||x.status==="dry_run"});var s={posted:p.length,imp:0,saves:0,clicks:0};
@@ -163,7 +174,7 @@ function render(){
  $("tiles").innerHTML=[["Pins posted",s.posted,""],["Impressions",s.imp.toLocaleString(),"l"],["Clicks to shop",s.clicks,""],["Saves",s.saves,""],["Click rate",rate,"p"],["Earned","₹"+s.earn.toLocaleString(),"g"]].map(function(t){return '<div class="tile '+t[2]+'"><span>'+t[0]+"</span><b>"+t[1]+"</b></div>"}).join("");
  // chart
  var days=[],i;for(i=13;i>=0;i--){var d=new Date();d.setDate(d.getDate()-i);days.push(today(d))}
- var imp={},clk={};S.pins.forEach(function(p){if(p.postedDate){imp[p.postedDate]=(imp[p.postedDate]||0)+(+p.imp||0);clk[p.postedDate]=(clk[p.postedDate]||0)+(+p.clicks||0)}});
+ var imp={},clk={};if(LIVE)LIVE.chart.forEach(function(r){imp[r.date]=r.impressions;clk[r.date]=r.clicks});else S.pins.forEach(function(p){if(p.postedDate){imp[p.postedDate]=(imp[p.postedDate]||0)+(+p.imp||0);clk[p.postedDate]=(clk[p.postedDate]||0)+(+p.clicks||0)}});
  var mi=Math.max.apply(null,days.map(function(d){return imp[d]||0}).concat(1)),mc=Math.max.apply(null,days.map(function(d){return clk[d]||0}).concat(1));
  $("chart").innerHTML=days.map(function(d){return '<div class="cg"><div class="a" style="height:'+((imp[d]||0)/mi*100)+'%" title="'+d+': '+(imp[d]||0)+' impressions"></div><div class="b" style="height:'+((clk[d]||0)/mc*100)+'%" title="'+d+': '+(clk[d]||0)+' clicks"></div></div>'}).join("");
  $("xl").innerHTML=days.map(function(d,i){return "<span>"+(i%2?"":d.slice(8))+"</span>"}).join("");
@@ -175,8 +186,8 @@ function render(){
  if(document.activeElement!==$("slotsIn"))$("slotsIn").value=S.settings.slots.join(", ");
  // apps
  $("apps").innerHTML=S.integrations.map(function(a){return '<div class="app"><div class="h"><div class="ic">'+a.icon+'</div><div><b>'+esc(a.name)+'</b><br><small>'+esc(a.desc)+'</small></div></div>'+
-  '<div class="r"><span class="chip dot '+(a.connected?"green":"")+'">'+(a.connected?"Connected":"Not connected")+'</span><label class="sw"><input type="checkbox" data-auto="'+a.id+'" '+(a.auto?"checked":"")+'> Auto-connect</label></div>'+
-  '<div class="r"><button class="sm '+(a.connected?"":"purple")+'" data-act="'+(a.connected?"disc:":"conn:")+a.id+'">'+(a.connected?"Disconnect":"Connect")+"</button>"+(a.custom?'<button class="sm" data-act="rmApp:'+a.id+'">Remove</button>':"")+"</div></div>"}).join("");
+  '<div class="r"><span class="chip dot '+(isConn(a)?"green":"")+'">'+(isConn(a)?"Connected":"Not connected")+'</span><label class="sw"><input type="checkbox" data-auto="'+a.id+'" '+(a.auto?"checked":"")+'> Auto-connect</label></div>'+
+  '<div class="r"><button class="sm '+(isConn(a)?"":"purple")+'" data-act="'+(isConn(a)?"disc:":"conn:")+a.id+'">'+(isConn(a)?"Disconnect":"Connect")+"</button>"+(a.custom?'<button class="sm" data-act="rmApp:'+a.id+'">Remove</button>':"")+"</div></div>"}).join("");
  $("autoAll").checked=S.integrations.every(function(a){return a.auto});
  // goals
  var g=S.goals,defs=[["pins","Pins posted",s.posted,"#f0568c"],["impressions","Impressions",s.imp,"#7a5ce0"],["clicks","Clicks to shop",s.clicks,"#ff9a5c"],["earnings","Earnings (₹)",s.earn,"#5aa31f"]];
@@ -207,16 +218,17 @@ function titleFromUrl(u){var seg=u.pathname.split("/").filter(function(x){return
 function postOne(slotKey){var p=S.pins.filter(function(x){return x.status==="ready"})[0];if(!p)return false;
  p.status=S.settings.dryRun?"dry_run":"posted";p.postedDate=today();if(slotKey)S.slotsDone[slotKey]=p.id;
  log((S.settings.dryRun?"[dry run] ":"")+"Posted: "+p.title+" → "+p.board);return true}
-function tick(){var t=today();var changed=false;
+function tick(){if(LIVE)return;var t=today();var changed=false;
  if(connected("pinterest"))S.settings.slots.forEach(function(sl){var k=t+" "+sl;if(!S.slotsDone[k]&&nowHM()>=sl){if(postOne(k))changed=true}});
  if(changed){save();render()}}
-function connect(id){var a=app(id);if(!a||a.connected)return;a.connected=null;render();
+function connect(id){var a=app(id);if(!a||isConn(a))return;if(id==="local"){pull(true);return}a.connected=null;render();
  setTimeout(function(){a.connected=true;a.at=Date.now();log("Connected "+a.name);save();render();say(a.name+" connected")},700)}
 
 document.addEventListener("click",function(e){var el=e.target.closest("[data-act]");if(!el)return;var act=el.dataset.act,arg="";var ix=act.indexOf(":");if(ix>0){arg=act.slice(ix+1);act=act.slice(0,ix)}
  var pin=function(){return S.pins.filter(function(p){return String(p.id)===arg})[0]};
+ if(LIVE&&["addPin","addSample","approve","skip","delPin","savePin","saveGoals","addEarn","delEarn","sample","toggleAuto","approveAll","toggleDry","postNext","saveSlots","reset"].indexOf(act)>-1)return say("Live mode: change this in your PinPilot app at localhost:8000");
  if(act==="conn")return connect(arg);
- if(act==="disc"){var a=app(arg);a.connected=false;log("Disconnected "+a.name);}
+ if(act==="disc"){if(arg==="local"){dropLive();return}var a=app(arg);a.connected=false;log("Disconnected "+a.name);}
  else if(act==="rmApp"){S.integrations=S.integrations.filter(function(a){return a.id!==arg})}
  else if(act==="addApp"){var n=$("newName").value.trim();if(!n)return say("Give the app a name");S.integrations.push({id:"c"+Date.now(),name:n,icon:"🧩",desc:$("newDesc").value.trim()||"Custom app",connected:false,auto:false,custom:true});$("newName").value=$("newDesc").value="";log("Added app "+n)}
  else if(act==="toggleAuto"){S.settings.autoApprove=!S.settings.autoApprove;if(S.settings.autoApprove)S.pins.forEach(function(p){if(p.status==="pending")p.status="ready"});log("Auto-approve "+(S.settings.autoApprove?"on":"off"))}
@@ -242,11 +254,12 @@ document.addEventListener("click",function(e){var el=e.target.closest("[data-act
  save();render()});
 
 document.addEventListener("change",function(e){var t=e.target;
- if(t.dataset.auto){var a=app(t.dataset.auto);a.auto=t.checked;if(t.checked&&!a.connected)connect(a.id);log("Auto-connect "+(t.checked?"on":"off")+": "+a.name);save();render()}
- else if(t.id==="autoAll"){S.integrations.forEach(function(a){a.auto=t.checked;if(t.checked&&!a.connected)connect(a.id)});save();render()}});
+ if(t.dataset.auto){var a=app(t.dataset.auto);a.auto=t.checked;if(t.checked&&!isConn(a))connect(a.id);log("Auto-connect "+(t.checked?"on":"off")+": "+a.name);save();render()}
+ else if(t.id==="autoAll"){S.integrations.forEach(function(a){a.auto=t.checked;if(t.checked&&!isConn(a))connect(a.id)});save();render()}});
 
 // auto-connect on load
-S.integrations.forEach(function(a){if(a.auto&&!a.connected)connect(a.id)});
+S.integrations.forEach(function(a){if(a.auto&&!isConn(a))connect(a.id)});
+setInterval(function(){if(LIVE)pull(false)},15000);
 render();tick();setInterval(tick,20000);setInterval(function(){if(!document.querySelector("details[open]")&&!/INPUT|TEXTAREA/.test(document.activeElement.tagName))render()},60000);
 })();
 </script></body></html>
