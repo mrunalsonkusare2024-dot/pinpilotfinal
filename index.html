@@ -102,6 +102,13 @@ pre{background:var(--ink);color:#d9d6ee;padding:14px;border-radius:16px;overflow
       <button class="sm dark" style="margin-top:8px" data-act="addApp">Add app</button></details>
   </div>
 
+  <div class="panel" id="liveInsights" style="margin-bottom:14px" hidden>
+    <h3>Trends &amp; niches <span class="chip green" style="margin-left:6px">live from your laptop</span></h3>
+    <div class="hint" id="liveHint"></div>
+    <div class="row2" style="margin-bottom:0"><div><b>Trending on Myntra &amp; Flipkart (4★+)</b><div id="liveTrend"></div></div>
+      <div><b>Niches to post about now</b><div id="liveNiche"></div><div class="meta" style="margin-top:8px">Approve niches in the PinPilot app (localhost:8000).</div></div></div>
+  </div>
+
   <div class="row2">
     <div class="panel" id="goals"><h3>Goals this month</h3><div class="hint">Set a target and the ring fills as you go.</div>
       <div class="rings" id="rings"></div><div style="margin-top:12px"><button class="dark" data-act="saveGoals">Save goals</button></div></div>
@@ -145,7 +152,8 @@ function save(){try{localStorage.setItem(KEY,JSON.stringify(REAL))}catch(e){}}
 function say(m){var t=$("toast");t.textContent=m;t.classList.add("on");clearTimeout(say.k);say.k=setTimeout(function(){t.classList.remove("on")},2600)}
 function log(m){S.log.unshift(new Date().toLocaleTimeString()+"  "+m);S.log=S.log.slice(0,80)}
 function app(id){return S.integrations.filter(function(a){return a.id===id})[0]}
-function isConn(a){if(a.id==="local")return !!LIVE;if(a.id==="pinterest"&&LIVE)return !!LIVE.pinterest.connected;return !!a.connected}
+function isConn(a){if(a.id==="local")return !!LIVE;if(a.id==="pinterest"&&LIVE)return !!LIVE.pinterest.connected;
+ if(LIVE&&LIVE.connections){var c=LIVE.connections.filter(function(x){return x.id===a.id})[0];if(c)return !!c.connected}return !!a.connected}
 function connected(id){var a=app(id);return !!(a&&isConn(a))}
 function goLive(j){LIVE=j;var t=today();
  var pins=j.pins.slice().reverse().map(function(p){return{id:p.id,title:p.title||"Untitled",src:(p.site||"").replace(/^./,function(c){return c.toUpperCase()}),price:p.price?Math.round(p.price):"",board:p.board||"",desc:"",status:p.status==="found"?"pending":p.status,postedDate:(p.posted_at||"").slice(0,10),imp:p.impressions,saves:p.saves,clicks:p.clicks}});
@@ -197,6 +205,10 @@ function render(){
  // pins
  $("pinGrid").innerHTML=S.pins.length?S.pins.slice().reverse().map(pinCard).join(""):'<div class="empty">No pins yet. Paste a product link above, or press <b>Prepare pins</b> to add sample ones.</div>';
  $("logBox").textContent=S.log.length?S.log.join("\n"):"Nothing has run yet.";
+ var li=$("liveInsights"),ins=LIVE&&LIVE.insights;li.hidden=!ins;
+ if(ins){$("liveHint").textContent=ins.items_count+" qualifying products · last scan "+(ins.last_scan||"never")+(LIVE.scanning?" · scanning now…":"")+(ins.pin_trends&&ins.pin_trends.error?" · "+ins.pin_trends.error:"");
+  $("liveTrend").innerHTML=ins.trending.slice(0,8).map(function(p){return '<div class="erow"><span>'+esc(p.name)+' <span class="meta">'+esc(p.site)+" · "+p.rating+"★ ("+p.rating_count+')</span></span><span class="chip lilac">'+p.score+"</span></div>"}).join("")||'<div class="meta">Run “Scan market now” in the app.</div>';
+  $("liveNiche").innerHTML=ins.niches.slice(0,8).map(function(n){return '<div class="erow"><span><b>'+esc(n.keyword)+'</b> <span class="meta">'+esc(n.sources.join(", "))+" · "+esc(n.category)+'</span></span><span class="chip '+(n.score>=75?"green":"lilac")+'">'+n.score+"</span></div>"}).join("")||'<div class="meta">No new niches right now.</div>'}
 }
 function nowHM(){var d=new Date();return String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0")}
 function pinCard(p){
